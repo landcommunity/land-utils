@@ -1,0 +1,20 @@
+{
+  "name": "land-utils",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/main.js",
+  "scripts": {
+    "start": "env-cmd node ./dist/main",
+    "dev": "env-cmd nodemon ./src/main.ts",
+    "build":"tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "^15.6.1",
+    "env-cmd": "^10.1.0"
+  }
+}
