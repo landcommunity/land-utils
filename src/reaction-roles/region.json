@@ -1,0 +1,27 @@
+{
+    "name": "Colors",
+    "description": "Choose your region. *(this is completely optional)* :earth_americas:",
+    "unique": true,
+    "roles": [
+        {
+            "color": "gray",
+            "role": "843096023710957574",
+            "label": "Red"
+        },
+        {
+            "color": "gray",
+            "role": "843094393417891861",
+            "label": "Blue"
+        },
+        {
+            "color": "gray",
+            "role": "843095894390997002",
+            "label": "Green"
+        },
+        {
+            "color": "gray",
+            "role": "843093933411663882",
+            "label": "Orange"
+        }
+    ]
+}

@@ -5,6 +5,7 @@ import discordButtons from "discord-buttons";
 import INTERACTION_CREATE_TYPE from "discord-buttons/typings/Classes/INTERACTION_CREATE";
 // @ts-ignore
 import INTERACTION_CREATE from "discord-buttons/src/Classes/INTERACTION_CREATE";
+import { RoleTemplate } from "./types";
 
 const client = new Discord.Client();
 const buttons = discordButtons(client);
@@ -78,11 +79,40 @@ client.on("ready", async () => {
     // @ts-ignore
     const member: GuildMember = button.clicker.member;
     const args = button.id.split(/ +/g);
+
     switch (args.shift()) {
       case "giverole":
+        const isUnique = Boolean(args[1]);
+        const id = args[2];
+        let removedRole = null;
+
+        if (isUnique) {
+          const template = require(`./reaction-roles/${id}.json`) as RoleTemplate;
+          for (const r of template.roles) {
+            if (member.roles.cache.has(r.role) && r.role != args[0]) {
+              member.roles.remove(r.role);
+              removedRole = r.role;
+            }
+          }
+        }
+
         member.roles.add(args[0]);
-        const role = button.guild.roles.cache.get(args[0]);
-        button.reply.send("Given role " + (role ? role?.name : args[0]), {
+
+        button.reply.send(`Gave you <@&${args[0]}> role${removedRole ? `, removed <@&${removedRole}> role` : ""}. :ok_hand:`, {
+          flags: 64,
+        });
+        break;
+      case "clearrole":
+        const template = require(`./reaction-roles/${args[0]}.json`) as RoleTemplate;
+        let i = 0;
+        for (const r of template.roles) {
+          if (member.roles.cache.has(r.role)) {
+            member.roles.remove(r.role);
+            i++;
+          }
+        }
+
+        button.reply.send(`Cleared ${i} role${i == 1 ? "" : "s"} for you.`, {
           flags: 64,
         });
         break;
