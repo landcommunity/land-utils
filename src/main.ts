@@ -86,6 +86,11 @@ client.on("ready", async () => {
           flags: 64,
         });
         break;
+      case "selectrespond":
+        button.reply.send(`Selected options: ${d.data.values.join(", ")}`, {
+          flags: 64,
+        });
+        break;
       default:
         button.defer(true);
     }

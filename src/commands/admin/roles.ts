@@ -24,21 +24,35 @@ export default class Command {
       // @ts-ignore
       (d) =>
         typeof d.role === "string" &&
-        typeof d.label === "string" &&
+        (typeof d.label === "string" || "emoji" in d) &&
         ("color" in d ? typeof d.color === "string" : true)
     );
     if (!valid) return;
     // @ts-ignore
     const buttons = roleData.roles.map((d) => {
-      return new discordButtons.MessageButton()
-        .setLabel(d.label)
+      const button = new discordButtons.MessageButton()
+        .setLabel(d.label || "")
         .setID("giverole " + d.role)
-        .setStyle(d.color || "gray");
+        .setStyle(d.color || "gray")
+        .toJSON();
+      //   @ts-ignore
+      if (d.emoji) button.emoji = d.emoji;
+      return button;
     });
-    msg.channel.send({
-      // @ts-ignore
-      buttons: buttons,
-      embed: new MessageEmbed().setTitle(name).setDescription(description),
+    // @ts-ignore
+    msg.client.api.channels(msg.channel.id).messages.post({
+      data: {
+        embed: new MessageEmbed()
+          .setTitle(name)
+          .setDescription(description)
+          .toJSON(),
+        components: [
+          {
+            type: 1,
+            components: buttons,
+          },
+        ],
+      },
     });
   }
 }
