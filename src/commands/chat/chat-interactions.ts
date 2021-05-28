@@ -42,7 +42,7 @@ export default class Command {
 
         msg.channel.send(
             this.PercVariableParser(
-                `> ${this.action.responses[Math.floor(Math.random() * this.action.responses.length)] || "f"}`,
+                `> ${this.action.responses[Math.floor(Math.random() * this.action.responses.length)]}`,
                 {
                     author: "**" + (msg.member?.nickname?.substr(msg.member?.nickname.indexOf("| ") + (msg.member.nickname.includes("|") ? 2 : 1), msg.member?.nickname.length) || msg.author.username) + "**",
                     reciever: "**" + (target.nickname?.substr(target?.nickname.indexOf("| ") + (target.nickname.includes("|") ? 2 : 1), target.nickname.length) || target.user.username) + "**",
