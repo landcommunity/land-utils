@@ -28,7 +28,9 @@ client.on("ready", async () => {
 	UpdateMainCategory(mainCategory);
 
 	const commands = [
-		...CommandLoader("admin").concat([...CommandLoader("dm")]),
+		...CommandLoader("admin"),
+		...CommandLoader("dm"),
+		...CommandLoader("chat")
 	];
 
 	client.on("message", (msg) => {
@@ -43,11 +45,22 @@ client.on("ready", async () => {
 			);
 			args.shift();
 
-			if (commandSearch.length > 0)
-				commandSearch[0].executor(msg, {
+			if (commandSearch.length > 0) {
+				
+				const command = commandSearch[0];
+				
+				if(
+					command.level === "admin" && msg.member && 
+					(!msg.member.roles.cache.has(process.env.LAND_ADMIN_ROLE as string) || 
+					!msg.member.roles.cache.has(process.env.LAND_DEVELOPER_ROLE as string))
+				) return msg.react("⛔"); // Insufficient permission for admin level command.
+
+				command.executor(msg, {
 					args,
 					name,
 				});
+			}
+
 		} else if (msg.channel.type === "dm") {
 			// The default name does not work for dm commands
 			// Use args[0] instead

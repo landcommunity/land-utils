@@ -6,7 +6,7 @@ import path from 'path';
 
 export default class Command {
   public aliases = ["roles"];
-  private templates = fs.readdirSync(path.join(__dirname, "../../reaction-roles"));
+  private templates = fs.readdirSync(path.join(__dirname, "../../data/reaction-roles"));
 
   public async executor(msg: Message, data: CommandData) {
     if (msg.channel.type !== "text") return;
@@ -16,7 +16,7 @@ export default class Command {
 
     if(foundTemplates.length <= 0) return msg.channel.send("lol not found");
     
-    const roleData = require("../../reaction-roles/"+foundTemplates[0]) as RoleTemplate;
+    const roleData = require("../../data/reaction-roles/"+foundTemplates[0]) as RoleTemplate;
     roleData._id = data.args[0].toLowerCase();
 
     if (typeof roleData !== "object") return;
