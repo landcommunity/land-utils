@@ -1,0 +1,12 @@
+{
+    "hug": {
+        "emotes": [
+            "<a:bighug:847861571911942154>"
+        ],
+        "responses": [
+            "%author% gave %reciever% a big hug! %emote%",
+            "%author% gave %reciever% a hug. %emote%",
+            "%author% hugged %reciever%. %emote%"
+        ]
+    }
+}
