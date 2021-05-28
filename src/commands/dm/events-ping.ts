@@ -1,4 +1,4 @@
-import { GuildMemberManager, Message, Role } from "discord.js";
+import { Message, Role } from "discord.js";
 import { CommandData } from "../../types";
 
 export default class Command {
