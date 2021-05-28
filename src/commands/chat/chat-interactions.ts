@@ -1,6 +1,5 @@
-import { GuildMember, Message, User } from "discord.js";
+import { Message } from "discord.js";
 import { CommandData } from "../../types";
-import WebhookManager from "../../utils/WebhookManager";
 import Data from '../../data/chat-interactions.json';
 
 export default class Command {
