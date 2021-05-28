@@ -27,12 +27,12 @@ client.on("ready", async () => {
 
   UpdateMainCategory(mainCategory);
 
-  const commands = [...CommandLoader("admin")];
+  const commands = [...CommandLoader("admin").concat([...CommandLoader("dm")])];
 
   client.on("message", (msg) => {
     if (msg.author.bot) return;
     const args = msg.content.split(" ");
-    const name = args[0].substr(process.env.PREFIX?.length || 1);
+    let name = args[0].substr(process.env.PREFIX?.length || 1);
 
     if (process.env.PREFIX && msg.content.startsWith(process.env.PREFIX)) {
       // @ts-ignore
@@ -47,9 +47,19 @@ client.on("ready", async () => {
           name,
         });
     } else if (msg.channel.type === "dm") {
+      // The default name does not work for dm commands
+      // Use args[0] instead
+      name = args[0];
       const commandSearch = commands.filter(
         (c) => c.level === "dm" && c.aliases.includes(name)
       );
+      args.shift();
+
+      if (commandSearch.length > 0)
+        commandSearch[0].executor(msg, {
+          args,
+          name,
+        });
     }
   });
 
