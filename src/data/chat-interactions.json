@@ -8,5 +8,14 @@
             "%author% gave %reciever% a hug. %emote%",
             "%author% hugged %reciever%. %emote%"
         ]
+    },
+    "punch": {
+        "emotes": [
+            ":left_facing_fist:"
+        ],
+        "responses": [
+            "%author% hit %reciever% %emote%",
+            "%author% punched %reciever% %emote%"
+        ]
     }
 }

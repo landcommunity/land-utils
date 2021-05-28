@@ -1,12 +1,23 @@
+import { DMChannel, GuildMember, Message, TextChannel } from "discord.js";
+
 export interface Command {
-    executor: (msg: Message, CommandData) => void
+    reply: (CommandData: CommandData, msg?: Message) => string
     aliases: string[]
     level: string
+    description?: string
+    options?: {
+        name: string,
+        description: string,
+        type: number,
+        required: boolean
+    }[]
 }
 
 export interface CommandData {
     args: string[]
     name: string
+    member?: GuildMember
+    channel: TextChannel|DMChannel 
 }
 
 export interface RoleDescriptor {
@@ -21,4 +32,10 @@ export interface RoleTemplate {
     _id?: string,
     unique: boolean,
     roles: RoleDescriptor[]
+}
+
+// Discord API stuff
+export interface AppCommands {
+    get: () => any[];
+    post: (params: { data: { name: string, description: string, options?: any} }) => void;
 }
