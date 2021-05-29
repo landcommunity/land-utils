@@ -5,6 +5,8 @@ export interface Command {
     aliases: string[]
     level: string
     description?: string
+    premium?: boolean
+    ratelimit?: number
     options?: {
         name: string,
         description: string,

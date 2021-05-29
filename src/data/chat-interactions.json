@@ -26,10 +26,22 @@
             "%author% bitchslapped %reciever% %emote%.",
             "%author% slapped %reciever% in the face. %emote%",
             "%author% smacked the shit out of %reciever%. %emote%",
-            "%author% %emote% the sh*t out of %reciever%. ",
+            "%author% %emote% the sh*t out of %reciever%.",
             "%author% slapped %reciever% %emote%.",
             "%reciever% provoked %author% into slapping his face. %emote%",
             "%reciever% got slapped by %author%. %emote%"
+        ]
+    },
+    "sus": {
+        "emotes": [
+            ":thinking:"
+        ],
+        "responses": [
+            "%author% thinks %reciever% is sus. %emote%",
+            "%author% suspects %reciever% of being sus. %emote%",
+            "%author% suspects %reciever% of being the imposter. %emote%",
+            "%author% says %reciever% is sus. %emote%",
+            "%author% saw %reciever% vent! %emote%"
         ]
     }
 }

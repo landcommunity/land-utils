@@ -7,6 +7,7 @@ import INTERACTION_CREATE from "discord-buttons/src/Classes/INTERACTION_CREATE";
 import { AppCommands, RoleTemplate } from "./types";
 
 const client = new Discord.Client();
+const CommandRateLimit = new Map();
 
 client.on("ready", async () => {
 	const land = client.guilds.cache.get(process.env.LAND_ID as string);
@@ -37,9 +38,9 @@ client.on("ready", async () => {
 	const scmd = app.commands as AppCommands;
 	const slashCommands = await scmd.get();
 
-	for(const sCmd of slashCommands) {
+	for (const sCmd of slashCommands) {
 		const cmd = commands.find(c => c.aliases.includes(sCmd.name));
-		if(!cmd || cmd?.level !== "chat") {
+		if (!cmd || cmd?.level !== "chat") {
 			/* @ts-ignore | Delete command */
 			await client.api.applications(client.user.id).guilds(land.id).commands(sCmd.id).delete();
 		}
@@ -77,7 +78,7 @@ client.on("ready", async () => {
 				if (
 					command.level === "admin" && msg.member &&
 					!(msg.member.roles.cache.has(process.env.LAND_ADMIN_ROLE as string) ||
-					msg.member.roles.cache.has(process.env.LAND_DEVELOPER_ROLE as string))
+						msg.member.roles.cache.has(process.env.LAND_DEVELOPER_ROLE as string))
 				) return msg.react("⛔"); // Insufficient permission for admin level command.
 
 				msg.channel.send(command.reply({
@@ -105,7 +106,7 @@ client.on("ready", async () => {
 				member: msg.member,
 				name
 			}));
-			
+
 		}
 	});
 
@@ -210,17 +211,50 @@ client.on("ready", async () => {
 			const options = d.data.options;
 			const cmd = commands.filter(c => c.aliases.includes(name))[0];
 
+			let content = await cmd.reply({
+				member,
+				name,
+				args: cmd.options?.map(o => options.find((of: any) => of.name === o.name)).map(c => c ? c.value : "") || [],
+				channel
+			}) || "An unexpected error occured ... please report to a developer.";
+
+			let flags = null;
+
+			/* if command is premium and user is not boosting */
+			if (cmd.premium && !member.premiumSince) {
+				content = "This command requires premium, please consider boosting the server. :relaxed:",
+				flags = 64;
+			}
+
+			// Command has a ratelimit
+			if (cmd.ratelimit) {
+				const rl = CommandRateLimit.get(`${member.id}-${name}`) as { date: Date, ratelimit: number };
+				
+				/* Is already being ratelimited */
+				if(rl) {
+					// @ts-ignore;
+					content = `You can run this command again in ${rl.ratelimit - (new Date(new Date() - rl.date).getSeconds())} seconds.`;
+					flags = 64;
+				} else {
+					CommandRateLimit.set(`${member.id}-${name}`, {
+						date: new Date(),
+						ratelimit: cmd.ratelimit
+					});
+
+					setTimeout(() => {
+						CommandRateLimit.delete(`${member.id}-${name}`);
+					}, 1000 * cmd.ratelimit);
+				}
+
+			}
+
 			// @ts-ignore
 			client.api.interactions(d.id, d.token).callback.post({
 				data: {
 					type: 4,
 					data: {
-						content: await cmd.reply({
-							member,
-							name,
-							args: options.map((a:any) => a.value) || [],
-							channel
-						}) || "An unexpected error occured ... please report to a developer."
+						content,
+						flags
 					}
 				}
 			});
