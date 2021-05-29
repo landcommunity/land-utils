@@ -1,4 +1,4 @@
-import Discord, { CategoryChannel, DMChannel, GuildMember, TextChannel } from "discord.js";
+import Discord, { CategoryChannel, DMChannel, Guild, GuildMember, TextChannel } from "discord.js";
 import CommandLoader from "./utils/CommandLoader";
 import UpdateMainCategory from "./utils/UpdateMainCategory";
 import INTERACTION_CREATE_TYPE from "discord-buttons/typings/Classes/INTERACTION_CREATE";
@@ -46,20 +46,22 @@ client.on("ready", async () => {
 		}
 	}
 
-	for (const cmd of commands.filter(c => c.level !== "dm")) {
+	for (const cmd of commands.filter(c => !["dm", "admin"].includes(c.level))) {
 		for (const alias of cmd.aliases) {
 			await scmd.post({
 				data: {
 					name: alias,
-					description: cmd.description || "No description",
+					description: `${cmd.premium ? "[Premium] " : ""}${cmd.description}` || "No description",
 					options: cmd.options
 				}
 			});
 		}
 	}
 
-	client.on("message", (msg) => {
-		if (msg.author.bot || !msg.member) return;
+	console.log("Completed slash commands mumbo jumbo");
+
+	client.on("message", async msg => {
+		if (msg.author.bot) return;
 		const args = msg.content.split(" ");
 
 		let name = args[0].substr(process.env.PREFIX?.length || 1);
@@ -81,11 +83,12 @@ client.on("ready", async () => {
 						msg.member.roles.cache.has(process.env.LAND_DEVELOPER_ROLE as string))
 				) return msg.react("⛔"); // Insufficient permission for admin level command.
 
-				msg.channel.send(command.reply({
+				msg.channel.send(await command.reply({
 					channel: msg.channel as TextChannel,
-					member: msg.member,
+					member: msg.member as GuildMember,
 					args,
 					name,
+					land
 				}, msg));
 			}
 
@@ -95,19 +98,21 @@ client.on("ready", async () => {
 			// The default name does not work for dm commands
 			// Use args[0] instead
 			name = args[0];
+
 			const commandSearch = commands.filter(
 				(c) => c.level === "dm" && c.aliases.includes(name)
 			);
 			args.shift();
 
-			if (commandSearch.length > 0) msg.channel.send(commandSearch[0].reply({
+			if (commandSearch.length > 0) msg.channel.send(await commandSearch[0].reply({
 				channel: msg.channel as DMChannel,
 				args,
-				member: msg.member,
-				name
-			}));
+				name,
+				land
+			}, msg));
 
 		}
+
 	});
 
 	client.on("guildMemberAdd", (m) => {
@@ -215,7 +220,8 @@ client.on("ready", async () => {
 				member,
 				name,
 				args: cmd.options?.map(o => options.find((of: any) => of.name === o.name)).map(c => c ? c.value : "") || [],
-				channel
+				channel,
+				land
 			}) || "An unexpected error occured ... please report to a developer.";
 
 			let flags = null;

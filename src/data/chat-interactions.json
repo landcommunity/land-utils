@@ -9,15 +9,6 @@
             "%author% hugged %reciever%. %emote%"
         ]
     },
-    "punch": {
-        "emotes": [
-            ":left_facing_fist:"
-        ],
-        "responses": [
-            "%author% hit %reciever% %emote%",
-            "%author% punched %reciever% %emote%"
-        ]
-    },
     "slap": {
         "emotes": [
             ":wave:"
@@ -42,6 +33,25 @@
             "%author% suspects %reciever% of being the imposter. %emote%",
             "%author% says %reciever% is sus. %emote%",
             "%author% saw %reciever% vent! %emote%"
+        ]
+    },
+    "smooch": {
+        "emotes": [
+            ":kissing_closed_eyes:",
+            ":flushed:"
+        ],
+        "responses": [
+            "%author% gave %reciever% a smooch. %emote%",
+            "%author% gave %reciever% a big smooch. %emote%",
+            "%reciever% received a big smooch from %author%. %emote%"
+        ]
+    },
+    "spit": {
+        "emotes": [
+            ":sweat_drops:"
+        ],
+        "responses": [
+            "%author% spit on %reciever%. %emote%"
         ]
     }
 }

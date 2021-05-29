@@ -19,7 +19,8 @@ export interface CommandData {
     args: string[]
     name: string
     member?: GuildMember
-    channel: TextChannel|DMChannel 
+    channel: TextChannel|DMChannel
+    land: Guild
 }
 
 export interface RoleDescriptor {

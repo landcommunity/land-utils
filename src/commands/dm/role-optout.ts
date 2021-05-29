@@ -4,14 +4,10 @@ import { CommandData } from "../../types";
 export default class Command {
     public aliases = ["e-ping", "a-ping"];
 
-    public async reply(msg: Message, data: CommandData) {
-        // Confirm the user is in Land guild
-        // Fetch the Land guild
-        const land = await msg.client.guilds.fetch(
-            process.env.LAND_ID as string
-        );
+    public async reply(data: CommandData, msg: Message) {
+
         // Attempt to fetch the user from Land guild
-        const member = await land.members.fetch(msg.author);
+        const member = await data.land.members.fetch(msg.author);
 
         if (!member) return `You're not in the Land server. How did you even message me? Join Land at discord.gg/${process.env.LAND_INVITE_CODE}`;
 
@@ -21,7 +17,7 @@ export default class Command {
         else roleId = process.env.LAND_ANNOUNCEMENTS_PING_ROLE as string;
 
         // To simplify later code for readability
-        const role = await land.roles.fetch(roleId);
+        const role = await data.land.roles.fetch(roleId);
 
         // Member has events role, remove it from them
         if (member.roles.cache.get(roleId)) {

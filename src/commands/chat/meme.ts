@@ -5,6 +5,7 @@ export default class Command {
 
     public premium = true;
     public cooldown = 30;
+    public description = "Create an original meme with your own top & bottom text."
     public aliases = ["meme"];
     public options = [
         {

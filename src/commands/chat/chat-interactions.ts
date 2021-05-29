@@ -5,7 +5,7 @@ import { SlashReplyType } from "../../utils/SlashReplyType";
 
 export default class Command {
     public aliases = Object.keys(Data);
-    public description = "Interaction command"
+    public description = "User interaction command."
     public cooldown = 30
     public options = [
         {
