@@ -17,5 +17,19 @@
             "%author% hit %reciever% %emote%",
             "%author% punched %reciever% %emote%"
         ]
+    },
+    "slap": {
+        "emotes": [
+            ":wave:"
+        ],
+        "responses": [
+            "%author% bitchslapped %reciever% %emote%.",
+            "%author% slapped %reciever% in the face. %emote%",
+            "%author% smacked the shit out of %reciever%. %emote%",
+            "%author% %emote% the sh*t out of %reciever%. ",
+            "%author% slapped %reciever% %emote%.",
+            "%reciever% provoked %author% into slapping his face. %emote%",
+            "%reciever% got slapped by %author%. %emote%"
+        ]
     }
 }

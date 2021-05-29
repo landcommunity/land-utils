@@ -38,4 +38,7 @@ export interface RoleTemplate {
 export interface AppCommands {
     get: () => any[];
     post: (params: { data: { name: string, description: string, options?: any} }) => void;
+    commands: (id: string) => {
+        delete: () => void;
+    }
 }

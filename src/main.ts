@@ -37,6 +37,14 @@ client.on("ready", async () => {
 	const scmd = app.commands as AppCommands;
 	const slashCommands = await scmd.get();
 
+	for(const sCmd of slashCommands) {
+		const cmd = commands.find(c => c.aliases.includes(sCmd.name));
+		if(!cmd || cmd?.level !== "chat") {
+			/* @ts-ignore | Delete command */
+			await client.api.applications(client.user.id).guilds(land.id).commands(sCmd.id).delete();
+		}
+	}
+
 	for (const cmd of commands.filter(c => c.level !== "dm")) {
 		for (const alias of cmd.aliases) {
 			await scmd.post({

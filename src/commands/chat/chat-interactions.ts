@@ -1,4 +1,4 @@
-import { Channel, Message, TextChannel } from "discord.js";
+import { Message } from "discord.js";
 import { CommandData } from "../../types";
 import Data from '../../data/chat-interactions.json';
 import { SlashReplyType } from "../../utils/SlashReplyType";
