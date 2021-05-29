@@ -227,23 +227,23 @@ client.on("ready", async () => {
 			}
 
 			// Command has a ratelimit
-			if (cmd.ratelimit) {
+			if (cmd.cooldown) {
 				const rl = CommandRateLimit.get(`${member.id}-${name}`) as { date: Date, ratelimit: number };
 				
 				/* Is already being ratelimited */
 				if(rl) {
 					// @ts-ignore;
-					content = `You can run this command again in ${rl.ratelimit - (new Date(new Date() - rl.date).getSeconds())} seconds.`;
+					content = `You can run this command again in ${rl.cooldown - (new Date(new Date() - rl.date).getSeconds())} seconds.`;
 					flags = 64;
 				} else {
 					CommandRateLimit.set(`${member.id}-${name}`, {
 						date: new Date(),
-						ratelimit: cmd.ratelimit
+						cooldown: cmd.cooldown
 					});
 
 					setTimeout(() => {
 						CommandRateLimit.delete(`${member.id}-${name}`);
-					}, 1000 * cmd.ratelimit);
+					}, 1000 * cmd.cooldown);
 				}
 
 			}

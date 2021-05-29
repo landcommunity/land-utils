@@ -6,7 +6,7 @@ export interface Command {
     level: string
     description?: string
     premium?: boolean
-    ratelimit?: number
+    cooldown?: number
     options?: {
         name: string,
         description: string,

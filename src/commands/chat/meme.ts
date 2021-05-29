@@ -4,7 +4,7 @@ import { SlashReplyType } from "../../utils/SlashReplyType";
 export default class Command {
 
     public premium = true;
-    public ratelimit = 5;
+    public cooldown = 30;
     public aliases = ["meme"];
     public options = [
         {

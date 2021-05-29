@@ -6,7 +6,7 @@ import { SlashReplyType } from "../../utils/SlashReplyType";
 export default class Command {
     public aliases = Object.keys(Data);
     public description = "Interaction command"
-    public ratelimit = 30
+    public cooldown = 30
     public options = [
         {
             name: "user",
