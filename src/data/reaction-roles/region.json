@@ -1,27 +1,27 @@
 {
     "name": "Colors",
-    "description": "Choose your region. *(this is completely optional)* :earth_americas:",
+    "description": "Choose your region. :earth_americas: *(this is completely optional)*",
     "unique": true,
     "roles": [
         {
             "color": "gray",
-            "role": "843096023710957574",
-            "label": "Red"
+            "role": "848224327044169748",
+            "label": "North America"
         },
         {
             "color": "gray",
-            "role": "843094393417891861",
-            "label": "Blue"
+            "role": "848224355330031656",
+            "label": "Europe"
         },
         {
             "color": "gray",
-            "role": "843095894390997002",
-            "label": "Green"
+            "role": "848224423525089310",
+            "label": "Asia"
         },
         {
             "color": "gray",
-            "role": "843093933411663882",
-            "label": "Orange"
+            "role": "848224454127648768",
+            "label": "South America"
         }
     ]
 }
