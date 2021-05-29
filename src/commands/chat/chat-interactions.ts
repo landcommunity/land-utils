@@ -2,6 +2,7 @@ import { Message } from "discord.js";
 import { CommandData } from "../../types";
 import Data from '../../data/chat-interactions.json';
 import { SlashReplyType } from "../../utils/SlashReplyType";
+import NameFormatter from "../../utils/NameFormatter";
 
 export default class Command {
     public aliases = Object.keys(Data);
@@ -53,8 +54,8 @@ export default class Command {
             this.PercVariableParser(
                 `> ${this.action.responses[Math.floor(Math.random() * this.action.responses.length)]}`,
                 {
-                    author: "**" + (data.member?.nickname?.substr(data.member?.nickname.indexOf("| ") + (data.member.nickname.includes("|") ? 2 : 1), data.member?.nickname.length) || data.member.user.username) + "**",
-                    reciever: "**" + (target.nickname?.substr(target?.nickname.indexOf("| ") + (target.nickname.includes("|") ? 2 : 1), target.nickname.length) || target.user.username) + "**",
+                    author: "**" + (NameFormatter(data.member)) + "**",
+                    reciever: "**" + (NameFormatter(target)) + "**",
                     emote: this.action.emotes[Math.floor(Math.random() * this.action.emotes.length)]
                 }
             )

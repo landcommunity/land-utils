@@ -1,10 +1,13 @@
-import Discord, { CategoryChannel, DMChannel, Guild, GuildMember, TextChannel } from "discord.js";
+import Discord, { CategoryChannel, GuildMember, TextChannel, VoiceConnection } from "discord.js";
 import CommandLoader from "./utils/CommandLoader";
 import UpdateMainCategory from "./utils/UpdateMainCategory";
 import INTERACTION_CREATE_TYPE from "discord-buttons/typings/Classes/INTERACTION_CREATE";
 // @ts-ignore
 import INTERACTION_CREATE from "discord-buttons/src/Classes/INTERACTION_CREATE";
 import { AppCommands, RoleTemplate } from "./types";
+import Message from "./events/Message";
+import MemberAdd from "./events/MemberAdd";
+import VoiceConnect from "./events/VoiceConnect";
 
 const client = new Discord.Client();
 const CommandCooldowns = new Map();
@@ -19,6 +22,7 @@ client.on("ready", async () => {
 	const mainCategory = land.channels.cache.get(
 		process.env.LAND_MAIN_CATEGORY_ID as string
 	) as CategoryChannel;
+
 	if (!mainCategory)
 		return console.error(
 			`Failed to fetch main category from id (${process.env.LAND_MAIN_CATEGORY_ID})`
@@ -32,97 +36,10 @@ client.on("ready", async () => {
 		...CommandLoader("chat")
 	];
 
-	/* Discord slash commands */
-	// @ts-ignore
-	const app = client.api.applications(client.user.id).guilds(land.id);
-	const scmd = app.commands as AppCommands;
-	const slashCommands = await scmd.get();
-
-	for (const sCmd of slashCommands) {
-		const cmd = commands.find(c => c.aliases.includes(sCmd.name));
-		if (!cmd || cmd?.level !== "chat") {
-			/* @ts-ignore | Delete command */
-			await client.api.applications(client.user.id).guilds(land.id).commands(sCmd.id).delete();
-		}
-	}
-
-	for (const cmd of commands.filter(c => !["dm", "admin"].includes(c.level))) {
-		for (const alias of cmd.aliases) {
-			await scmd.post({
-				data: {
-					name: alias,
-					description: `${cmd.premium ? "[Premium] " : ""}${cmd.description}` || "No description",
-					options: cmd.options
-				}
-			});
-		}
-	}
-
-	console.log("Completed slash commands mumbo jumbo");
-
-	client.on("message", async msg => {
-		if (msg.author.bot) return;
-		const args = msg.content.split(" ");
-
-		let name = args[0].substr(process.env.PREFIX?.length || 1);
-
-		if (process.env.PREFIX && msg.content.startsWith(process.env.PREFIX)) {
-			// @ts-ignore
-			const commandSearch = commands.filter(
-				(c) => c.level === "admin" && c.aliases.includes(name)
-			);
-			args.shift();
-
-			if (commandSearch.length > 0) {
-
-				const command = commandSearch[0];
-
-				if (
-					command.level === "admin" && msg.member &&
-					!(msg.member.roles.cache.has(process.env.LAND_ADMIN_ROLE as string) ||
-						msg.member.roles.cache.has(process.env.LAND_DEVELOPER_ROLE as string))
-				) return msg.react("⛔"); // Insufficient permission for admin level command.
-
-				msg.channel.send(await command.reply({
-					channel: msg.channel as TextChannel,
-					member: msg.member as GuildMember,
-					args,
-					name,
-					land
-				}, msg));
-			}
-
-		}
-
-		if (msg.channel.type === "dm") {
-			// The default name does not work for dm commands
-			// Use args[0] instead
-			name = args[0];
-
-			const commandSearch = commands.filter(
-				(c) => c.level === "dm" && c.aliases.includes(name)
-			);
-			args.shift();
-
-			if (commandSearch.length > 0) msg.channel.send(await commandSearch[0].reply({
-				channel: msg.channel as DMChannel,
-				args,
-				name,
-				land
-			}, msg));
-
-		}
-
-	});
-
-	client.on("guildMemberAdd", (m) => {
-		UpdateMainCategory(mainCategory);
-
-		// Add events ping role to new members.
-		m.roles.add(process.env.LAND_EVENTS_PING_ROLE as string);
-	});
-
+	client.on("message", async msg => Message(msg, commands, land));
+	client.on("guildMemberAdd", async member => MemberAdd(member, mainCategory));
 	client.on("guildMemberRemove", () => UpdateMainCategory(mainCategory));
+	client.on("voiceStateUpdate", VoiceConnect);
 
 	// @ts-ignore
 	client.ws.on("INTERACTION_CREATE", async (d) => {
@@ -229,15 +146,15 @@ client.on("ready", async () => {
 			/* if command is premium and user is not boosting */
 			if (cmd.premium && !member.premiumSince) {
 				content = "This command requires premium, please consider boosting the server. :relaxed:",
-				flags = 64;
+					flags = 64;
 			}
 
 			// Command has a ratelimit
 			if (cmd.cooldown) {
 				const rl = CommandCooldowns.get(`${member.id}-${name}`) as { date: Date, cooldown: number };
-				
+
 				/* Is already being ratelimited */
-				if(rl) {
+				if (rl) {
 					// @ts-ignore;
 					content = `You can run this command again in ${rl.cooldown - (new Date(new Date() - rl.date).getSeconds())} seconds.`;
 					flags = 64;
@@ -266,6 +183,35 @@ client.on("ready", async () => {
 			});
 
 		}
+
+		/* Discord slash commands */
+		// @ts-ignore
+		const app = client.api.applications(client.user.id).guilds(land.id);
+		const scmd = app.commands as AppCommands;
+		const slashCommands = await scmd.get();
+
+		for (const sCmd of slashCommands) {
+			const cmd = commands.find(c => c.aliases.includes(sCmd.name));
+			if (!cmd || cmd?.level !== "chat") {
+				/* @ts-ignore | Delete command */
+				await client.api.applications(client.user.id).guilds(land.id).commands(sCmd.id).delete();
+			}
+		}
+
+		for (const cmd of commands.filter(c => !["dm", "admin"].includes(c.level))) {
+			for (const alias of cmd.aliases) {
+				await scmd.post({
+					data: {
+						name: alias,
+						description: `${cmd.premium ? "[Premium] " : ""}${cmd.description}` || "No description",
+						options: cmd.options
+					}
+				});
+			}
+		}
+
+		console.log("Completed slash commands mumbo jumbo");
+
 	});
 });
 
