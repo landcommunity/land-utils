@@ -8,13 +8,13 @@ export default class Command {
   public aliases = ["roles"];
   private templates = fs.readdirSync(path.join(__dirname, "../../data/reaction-roles"));
 
-  public async executor(msg: Message, data: CommandData) {
-    if (msg.channel.type !== "text") return;
-    if (!msg.member?.roles.cache.has("783337241757220918")) return;
+  public async reply(data: CommandData, msg: Message) {
+    if (data.channel.type !== "text") return;
+    if (!data.member?.roles.cache.has("783337241757220918")) return;
     
     const foundTemplates = this.templates.filter(t => t === data.args[0].toLowerCase()+".json");
 
-    if(foundTemplates.length <= 0) return msg.channel.send("lol not found");
+    if(foundTemplates.length <= 0) return "lol not found";
     
     const roleData = require("../../data/reaction-roles/"+foundTemplates[0]) as RoleTemplate;
     roleData._id = data.args[0].toLowerCase();
