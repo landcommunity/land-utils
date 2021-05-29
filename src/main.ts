@@ -183,6 +183,7 @@ client.on("ready", async () => {
 			});
 
 		}
+	});
 
 		/* Discord slash commands */
 		// @ts-ignore
@@ -212,7 +213,6 @@ client.on("ready", async () => {
 
 		console.log("Completed slash commands mumbo jumbo");
 
-	});
 });
 
 client.login(process.env.DISCORD_TOKEN).then((e) => {
