@@ -7,7 +7,7 @@ import INTERACTION_CREATE from "discord-buttons/src/Classes/INTERACTION_CREATE";
 import { AppCommands, RoleTemplate } from "./types";
 
 const client = new Discord.Client();
-const CommandRateLimit = new Map();
+const CommandCooldowns = new Map();
 
 client.on("ready", async () => {
 	const land = client.guilds.cache.get(process.env.LAND_ID as string);
@@ -228,7 +228,7 @@ client.on("ready", async () => {
 
 			// Command has a ratelimit
 			if (cmd.cooldown) {
-				const rl = CommandRateLimit.get(`${member.id}-${name}`) as { date: Date, ratelimit: number };
+				const rl = CommandCooldowns.get(`${member.id}-${name}`) as { date: Date, cooldown: number };
 				
 				/* Is already being ratelimited */
 				if(rl) {
@@ -236,13 +236,13 @@ client.on("ready", async () => {
 					content = `You can run this command again in ${rl.cooldown - (new Date(new Date() - rl.date).getSeconds())} seconds.`;
 					flags = 64;
 				} else {
-					CommandRateLimit.set(`${member.id}-${name}`, {
+					CommandCooldowns.set(`${member.id}-${name}`, {
 						date: new Date(),
 						cooldown: cmd.cooldown
 					});
 
 					setTimeout(() => {
-						CommandRateLimit.delete(`${member.id}-${name}`);
+						CommandCooldowns.delete(`${member.id}-${name}`);
 					}, 1000 * cmd.cooldown);
 				}
 
