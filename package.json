@@ -6,7 +6,7 @@
   "scripts": {
     "start": "env-cmd node ./dist/main",
     "dev": "env-cmd nodemon ./src/main.ts",
-    "build": "tsc"
+    "build": "tsc && copyfiles -u 2 ./src/data/reaction-roles/*.json ./dist/data"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^15.6.1",
+    "copyfiles": "^2.4.1",
     "env-cmd": "^10.1.0",
     "typescript": "^4.3.2"
   }
