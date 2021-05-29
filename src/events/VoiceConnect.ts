@@ -1,4 +1,4 @@
-import { CategoryChannel, GuildMember, VoiceState } from "discord.js";
+import { CategoryChannel, GuildMember, User, VoiceState } from "discord.js";
 import NameFormatter from "../utils/NameFormatter";
 
 const Cache = new Map();
@@ -10,6 +10,7 @@ export default async (os: VoiceState, ns: VoiceState) => {
 
         const parent = ns.channel.parent as CategoryChannel;
         const member = ns.member as GuildMember;
+        const botUser = ns.client.user as User;
 
         const cooldown = Cooldown.get(member.id);
         if(cooldown) {
@@ -26,7 +27,16 @@ export default async (os: VoiceState, ns: VoiceState) => {
         }
 
 
-        const vc = await ns.channel.guild.channels.create(`${NameFormatter(member)}'s channel`, {parent, type:"voice"});
+        const vc = await ns.channel.guild.channels.create(`${NameFormatter(member)}'s channel`, {parent, type:"voice", permissionOverwrites: [
+            {
+                id: member.id,
+                allow: ["MANAGE_CHANNELS"]
+            },{
+                id: botUser.id,
+                allow: ["MANAGE_CHANNELS"]
+            }
+        ]});
+
         Cache.set(vc.id, member.id);
         Cooldown.set(member.id, new Date());
         setTimeout(() => Cooldown.delete(member.id), 1000*5);
