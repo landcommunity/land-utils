@@ -3,6 +3,7 @@ import { CommandData } from "../../types";
 import Data from '../../data/chat-interactions.json';
 import { SlashReplyType } from "../../utils/SlashReplyType";
 import NameFormatter from "../../utils/NameFormatter";
+import { MessageButton } from "discord-buttons";
 
 export default class Command {
     public aliases = Object.keys(Data);

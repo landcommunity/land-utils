@@ -1,13 +1,12 @@
-import Discord, { CategoryChannel, GuildMember, TextChannel, VoiceConnection } from "discord.js";
+import Discord, { CategoryChannel, TextChannel } from "discord.js";
 import CommandLoader from "./utils/CommandLoader";
 import UpdateMainCategory from "./utils/UpdateMainCategory";
-import INTERACTION_CREATE_TYPE from "discord-buttons/typings/Classes/INTERACTION_CREATE";
 // @ts-ignore
-import INTERACTION_CREATE from "discord-buttons/src/Classes/INTERACTION_CREATE";
-import { AppCommands, RoleTemplate } from "./types";
+import { AppCommands } from "./types";
 import Message from "./events/Message";
 import MemberAdd from "./events/MemberAdd";
 import VoiceConnect from "./events/VoiceConnect";
+import { MessageButton } from "discord-buttons";
 
 const client = new Discord.Client();
 const CommandCooldowns = new Map();
@@ -43,87 +42,96 @@ client.on("ready", async () => {
 
 	// @ts-ignore
 	client.ws.on("INTERACTION_CREATE", async (d) => {
-		/* Button interaction */
-		if (d.type == 3) {
-			if (!d.message.components) return;
-			const validId = !!d.message.components.find(
-				// @ts-ignore
-				(c) =>
-					c.type == 1 &&
-					// @ts-ignore
-					c.components.find((b) => b.custom_id == d.data.custom_id)
-			);
-			if (!validId) return;
-			const button: INTERACTION_CREATE_TYPE = new INTERACTION_CREATE(
-				client,
-				d
-			);
-			if (button.message.author.id != client.user?.id) return;
-			// @ts-ignore
-			const member: GuildMember = button.clicker.member;
-			const args = button.id.split(/ +/g);
 
-			switch (args.shift()) {
-				case "giverole":
-					const isUnique = Boolean(args[1]);
-					const id = args[2];
-					let removedRole = null;
+		if(d.type == 3) {
+			const id = d.data.custom_id.substr(0, d.data.custom_id.indexOf("_"));
+			const cmd = commands.find(c => c.cmd_id === id);
+			if(cmd && cmd.interaction) cmd.interaction(client, d);
+		}
 
-					if (isUnique) {
-						const template =
-							require(`./data/reaction-roles/${id}.json`) as RoleTemplate;
-						for (const r of template.roles) {
-							if (
-								member.roles.cache.has(r.role) &&
-								r.role != args[0]
-							) {
-								member.roles.remove(r.role);
-								removedRole = r.role;
-							}
-						}
-					}
 
-					member.roles.add(args[0]);
+		// /* Button interaction */
+		// if (d.type == 3) {
+		// 	if (!d.message.components) return;
+		// 	const validId = !!d.message.components.find(
+		// 		// @ts-ignore
+		// 		(c) =>
+		// 			c.type == 1 &&
+		// 			// @ts-ignore
+		// 			c.components.find((b) => b.custom_id == d.data.custom_id)
+		// 	);
+		// 	if (!validId) return;
+		// 	const button: INTERACTION_CREATE_TYPE = new INTERACTION_CREATE(
+		// 		client,
+		// 		d
+		// 	);
+		// 	if (button.message.author.id != client.user?.id) return;
+		// 	// @ts-ignore
+		// 	const member: GuildMember = button.clicker.member;
+		// 	const args = button.id.split(/ +/g);
 
-					button.reply.send(
-						`Gave you <@&${args[0]}> role${removedRole ? `, removed <@&${removedRole}> role` : ""
-						}. :ok_hand:`,
-						{
-							flags: 64,
-						}
-					);
-					break;
-				case "clearrole":
-					const template =
-						require(`./reaction-roles/${args[0]}.json`) as RoleTemplate;
-					let i = 0;
-					for (const r of template.roles) {
-						if (member.roles.cache.has(r.role)) {
-							member.roles.remove(r.role);
-							i++;
-						}
-					}
+		// 	switch (args.shift()) {
+		// 		case "giverole":
+		// 			const isUnique = Boolean(args[1]);
+		// 			const id = args[2];
+		// 			let removedRole = null;
 
-					button.reply.send(
-						`Cleared ${i} role${i == 1 ? "" : "s"} for you.`,
-						{
-							flags: 64,
-						}
-					);
-					break;
-				case "selectrespond":
-					button.reply.send(
-						`Selected options: ${d.data.values.join(", ")}`,
-						{
-							flags: 64,
-						}
-					);
-					break;
-				default:
-					button.defer(true);
-			}
-			/* Slash commands */
-		} else if (d.type == 2) {
+		// 			if (isUnique) {
+		// 				const template =
+		// 					require(`./data/reaction-roles/${id}.json`) as RoleTemplate;
+		// 				for (const r of template.roles) {
+		// 					if (
+		// 						member.roles.cache.has(r.role) &&
+		// 						r.role != args[0]
+		// 					) {
+		// 						member.roles.remove(r.role);
+		// 						removedRole = r.role;
+		// 					}
+		// 				}
+		// 			}
+
+		// 			member.roles.add(args[0]);
+
+		// 			button.reply.send(
+		// 				`Gave you <@&${args[0]}> role${removedRole ? `, removed <@&${removedRole}> role` : ""
+		// 				}. :ok_hand:`,
+		// 				{
+		// 					flags: 64,
+		// 				}
+		// 			);
+		// 			break;
+		// 		case "clearrole":
+		// 			const template =
+		// 				require(`./reaction-roles/${args[0]}.json`) as RoleTemplate;
+		// 			let i = 0;
+		// 			for (const r of template.roles) {
+		// 				if (member.roles.cache.has(r.role)) {
+		// 					member.roles.remove(r.role);
+		// 					i++;
+		// 				}
+		// 			}
+
+		// 			button.reply.send(
+		// 				`Cleared ${i} role${i == 1 ? "" : "s"} for you.`,
+		// 				{
+		// 					flags: 64,
+		// 				}
+		// 			);
+		// 			break;
+		// 		case "selectrespond":
+		// 			button.reply.send(
+		// 				`Selected options: ${d.data.values.join(", ")}`,
+		// 				{
+		// 					flags: 64,
+		// 				}
+		// 			);
+		// 			break;
+		// 		default:
+		// 			button.defer(true);
+		// 	}
+		// 	/* Slash commands */
+
+		if (d.type == 2) {
 			const member = land.members.cache.get(d.member.user.id);
 			const channel = land.channels.cache.get(d.channel_id) as TextChannel;
 
@@ -136,17 +144,19 @@ client.on("ready", async () => {
 			let content = await cmd.reply({
 				member,
 				name,
-				args: cmd.options?.map(o => options.find((of: any) => of.name === o.name)).map(c => c ? c.value : "") || [],
+				args: cmd.options?.map(o => options ? options.find((of: any) => of.name === o.name) : null).map(c => c ? c.value : "") || [],
 				channel,
 				land
 			}) || "An unexpected error occured ... please report to a developer.";
 
 			let flags = null;
+			let buttons = cmd.buttons as MessageButton[] | null;
 
 			/* if command is premium and user is not boosting */
 			if (cmd.premium && !member.premiumSince) {
 				content = "This command requires premium, please consider boosting the server. :relaxed:",
-					flags = 64;
+				buttons = null;
+				flags = 64;
 			}
 
 			// Command has a ratelimit
@@ -157,6 +167,7 @@ client.on("ready", async () => {
 				if (rl) {
 					// @ts-ignore;
 					content = `You can run this command again in ${rl.cooldown - (new Date(new Date() - rl.date).getSeconds())} seconds.`;
+					buttons = null;
 					flags = 64;
 				} else {
 					CommandCooldowns.set(`${member.id}-${name}`, {
@@ -177,7 +188,13 @@ client.on("ready", async () => {
 					type: 4,
 					data: {
 						content,
-						flags
+						flags,
+						components: buttons ? [
+							{
+							  type: 1,
+							  components: buttons,
+							}
+						] : null
 					}
 				}
 			});
