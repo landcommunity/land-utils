@@ -49,12 +49,14 @@ export default class Command {
 
     public async interaction(client: Client, d: Interaction) {
         let t = this.Active.get(btoa(d.message.content || "")) as TriviaQuestion;
-        if(t && Object.keys(t.participants).includes(d.member.user.id)) return DiscordPostMessage(client, d, `You already got it ${t.participants[d.member.user.id] ? "right" : "wrong"}!`, true);
+        if(t && Object.keys(t.participants).includes(d.member.user.id)) return DiscordPostMessage(client, d, `You already got it ${t.participants[d.member.user.id] ? "right" : "wrong"}! The correct answer was "${t.correct_answer}"`, true);
+
+        const member = client.guilds.cache.get(d.guild_id)?.members.cache.get(d.member.user.id);
 
         // Member was correct
         if (t && d.data.custom_id === "trivia_correct") {
 
-            DiscordPostMessage(client, d, `:white_check_mark: **${NameFormatter(d.member)}** got it right!`);
+            DiscordPostMessage(client, d, `:white_check_mark: **${NameFormatter(member || d.member)}** got it right!`);
 
             // @ts-ignore
             t.participants[d.member.user.id] = true;
@@ -63,7 +65,7 @@ export default class Command {
 
         // Member was incorrect 
         else if (t && d.data.custom_id === "trivia_incorrect") {
-            DiscordPostMessage(client, d, `:x: **${NameFormatter(d.member)}** got it wrong!`);
+            DiscordPostMessage(client, d, `:x: **${NameFormatter(member || d.member)}** got it wrong!`);
 
             // @ts-ignore
             t.participants[d.member.user.id] = false;
