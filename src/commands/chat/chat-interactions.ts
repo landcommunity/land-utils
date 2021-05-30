@@ -8,7 +8,7 @@ import { MessageButton } from "discord-buttons";
 export default class Command {
     public aliases = Object.keys(Data);
     public description = "User interaction command."
-    public cooldown = 30
+    public cooldown = 60
     public options = [
         {
             name: "user",

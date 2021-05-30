@@ -48,7 +48,7 @@ export default class Command {
     }
 
     public async interaction(client: Client, d: Interaction) {
-        let t = this.Active.get(btoa(d.message.content)) as TriviaQuestion;
+        let t = this.Active.get(btoa(d.message.content || "")) as TriviaQuestion;
         if(t && Object.keys(t.participants).includes(d.member.user.id)) return DiscordPostMessage(client, d, `You already got it ${t.participants[d.member.user.id] ? "right" : "wrong"}!`, true);
 
         // Member was correct
@@ -58,7 +58,7 @@ export default class Command {
 
             // @ts-ignore
             t.participants[d.member.user.id] = true;
-            this.Active.set(btoa(d.message.content), t);
+            this.Active.set(btoa(d.message.content || ""), t);
         }
 
         // Member was incorrect 
@@ -67,7 +67,7 @@ export default class Command {
 
             // @ts-ignore
             t.participants[d.member.user.id] = false;
-            this.Active.set(btoa(d.message.content), t);
+            this.Active.set(btoa(d.message.content || ""), t);
         }
 
         // Trivia expired
@@ -105,7 +105,7 @@ export default class Command {
             }
 
             const content = `**Trivia:** ${unescape(t.question)}`;
-            this.Active.set(btoa(content), { ...t, participants: {} });
+            this.Active.set(btoa(content || ""), { ...t, participants: {} });
 
             return content;
         }
