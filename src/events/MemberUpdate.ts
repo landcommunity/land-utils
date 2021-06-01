@@ -7,5 +7,6 @@ export default async (
   if (member.roles.cache.size && !oldmember.roles.cache.size) {
     // Add events ping role to new members.
     member.roles.add(process.env.LAND_EVENTS_PING_ROLE as string);
+    member.roles.add(process.env.LAND_ANNOUNCEMENTS_PING_ROLE as string);
   }
 };
