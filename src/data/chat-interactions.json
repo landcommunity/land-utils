@@ -52,5 +52,21 @@
         "responses": [
             "%author% spat on %reciever%. %emote%"
         ]
+    },
+    "sue": {
+        "emotes": [
+            ":briefcase:"
+        ],
+        "responses": [
+            "%author% is suing %reciever%. %reciever% make your case! %emote%"
+        ]
+    },
+    "bite": {
+        "emotes": [
+            ":no_mouth:"
+        ],
+        "responses": [
+            "%author% bit %reciever%. %emote%"
+        ]
     }
 }

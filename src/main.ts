@@ -5,7 +5,6 @@ import UpdateMainCategory from "./utils/UpdateMainCategory";
 import { AppCommands } from "./types";
 import Message from "./events/Message";
 import MemberAdd from "./events/MemberAdd";
-import MemberUpdate from "./events/MemberUpdate";
 import VoiceConnect from "./events/VoiceConnect";
 import { MessageButton } from "discord-buttons";
 
@@ -42,10 +41,6 @@ client.on("ready", async () => {
   );
   client.on("guildMemberRemove", () => UpdateMainCategory(mainCategory));
   client.on("voiceStateUpdate", VoiceConnect);
-
-  client.on("guildMemberUpdate", (oldmember, member) =>
-    MemberUpdate(oldmember, member)
-  );
 
   // @ts-ignore
   client.ws.on("INTERACTION_CREATE", async (d) => {
