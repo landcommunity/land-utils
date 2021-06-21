@@ -9,13 +9,64 @@
             "%author% hugged %reciever%. %emote%"
         ]
     },
-    "punch": {
+    "slap": {
         "emotes": [
-            ":left_facing_fist:"
+            ":wave:"
         ],
         "responses": [
-            "%author% hit %reciever% %emote%",
-            "%author% punched %reciever% %emote%"
+            "%author% bitchslapped %reciever% %emote%.",
+            "%author% slapped %reciever% in the face. %emote%",
+            "%author% smacked the shit out of %reciever%. %emote%",
+            "%author% %emote% the shit out of %reciever%.",
+            "%author% slapped %reciever% %emote%.",
+            "%reciever% got slapped by %author%. %emote%"
+        ]
+    },
+    "sus": {
+        "emotes": [
+            ":thinking:"
+        ],
+        "responses": [
+            "%author% thinks %reciever% is sus. %emote%",
+            "%author% suspects %reciever% of being sus. %emote%",
+            "%author% suspects %reciever% of being the imposter. %emote%",
+            "%author% says %reciever% is sus. %emote%",
+            "%author% saw %reciever% vent! %emote%"
+        ]
+    },
+    "smooch": {
+        "emotes": [
+            ":kissing_closed_eyes:",
+            ":flushed:"
+        ],
+        "responses": [
+            "%author% gave %reciever% a smooch. %emote%",
+            "%author% gave %reciever% a big smooch. %emote%",
+            "%reciever% received a big smooch from %author%. %emote%"
+        ]
+    },
+    "spit": {
+        "emotes": [
+            ":sweat_drops:"
+        ],
+        "responses": [
+            "%author% spat on %reciever%. %emote%"
+        ]
+    },
+    "sue": {
+        "emotes": [
+            ":briefcase:"
+        ],
+        "responses": [
+            "%author% is suing %reciever%. %reciever% make your case! %emote%"
+        ]
+    },
+    "bite": {
+        "emotes": [
+            ":no_mouth:"
+        ],
+        "responses": [
+            "%author% bit %reciever%. %emote%"
         ]
     }
 }

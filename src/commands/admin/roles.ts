@@ -9,13 +9,14 @@ export default class Command {
   private templates = fs.readdirSync(path.join(__dirname, "../../data/reaction-roles"));
 
   public async reply(data: CommandData, msg: Message) {
+    if(data.args.length <= 0) return `**Available templates:**\n${this.templates.join("\n").replace(/.json/g, "")}`;
     if (data.channel.type !== "text") return;
     if (!data.member?.roles.cache.has("783337241757220918")) return;
     
     const foundTemplates = this.templates.filter(t => t === data.args[0].toLowerCase()+".json");
 
-    if(foundTemplates.length <= 0) return "lol not found";
-    
+    if(foundTemplates.length <= 0) return `Could not find \`${data.args[0]}.json\``;
+
     const roleData = require("../../data/reaction-roles/"+foundTemplates[0]) as RoleTemplate;
     roleData._id = data.args[0].toLowerCase();
 

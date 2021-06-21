@@ -6,16 +6,25 @@
   "scripts": {
     "start": "env-cmd node ./dist/main",
     "dev": "env-cmd nodemon ./src/main.ts",
-    "build": "tsc"
+    "build": "tsc && copyfiles -u 2 ./src/data/reaction-roles/*.json ./dist/data"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "btoa": "^1.2.1",
     "discord-buttons": "^2.4.1",
-    "discord.js": "^12.5.3"
+    "discord.js": "^12.5.3",
+    "express": "^4.17.1",
+    "html-escaper": "^3.0.3",
+    "jimp": "^0.16.1",
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "@types/btoa": "^1.2.3",
+    "@types/html-escaper": "^3.0.0",
     "@types/node": "^15.6.1",
+    "@types/node-fetch": "^2.5.10",
+    "copyfiles": "^2.4.1",
     "env-cmd": "^10.1.0",
     "typescript": "^4.3.2"
   }
