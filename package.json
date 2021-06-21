@@ -14,7 +14,9 @@
     "btoa": "^1.2.1",
     "discord-buttons": "^2.4.1",
     "discord.js": "^12.5.3",
+    "express": "^4.17.1",
     "html-escaper": "^3.0.3",
+    "jimp": "^0.16.1",
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
