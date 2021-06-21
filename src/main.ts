@@ -7,6 +7,8 @@ import Message from "./events/Message";
 import MemberAdd from "./events/MemberAdd";
 import VoiceConnect from "./events/VoiceConnect";
 import { MessageButton } from "discord-buttons";
+import Jimp from 'jimp';
+import path from 'path';
 
 const client = new Discord.Client();
 const CommandCooldowns = new Map();
@@ -28,6 +30,19 @@ client.on("ready", async () => {
     );
 
   UpdateMainCategory(mainCategory);
+
+  // Handle server icon
+  setInterval(async () => {
+
+    const icon = await Jimp.read(path.join(__dirname, "./assets/icon-foreground.png"));
+    
+    icon.color([
+      { apply: 'hue', params: [Math.round(-360 + Math.random() * 720)] },
+    ]);
+
+    land.setIcon(await icon.getBase64Async("image/png"));
+
+  }, 600000)
 
   const commands = [
     ...CommandLoader("admin"),
@@ -139,7 +154,9 @@ client.on("ready", async () => {
 
       const name = d.data.name;
       const options = d.data.options;
-      const cmd = commands.filter((c) => c.aliases.includes(name))[0];
+      const cmd = commands.find((c) => c.aliases.includes(name));
+
+      if (!cmd) return;
 
       let content =
         (await cmd.reply({
@@ -179,7 +196,7 @@ client.on("ready", async () => {
           content = `You can run this command again in ${
             // @ts-ignore
             rl.cooldown - new Date(new Date() - rl.date).getSeconds()
-          } seconds.`;
+            } seconds.`;
           buttons = null;
           flags = 64;
         } else {
@@ -203,11 +220,11 @@ client.on("ready", async () => {
             flags,
             components: buttons
               ? [
-                  {
-                    type: 1,
-                    components: buttons,
-                  },
-                ]
+                {
+                  type: 1,
+                  components: buttons,
+                },
+              ]
               : null,
           },
         },

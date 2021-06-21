@@ -9,28 +9,25 @@ export default async (msg: Message, commands: Command[], land: Guild) => {
 
     if (process.env.PREFIX && msg.content.startsWith(process.env.PREFIX)) {
         // @ts-ignore
-        const commandSearch = commands.filter(
+        const command = commands.find(
             (c) => c.level === "admin" && c.aliases.includes(name)
         );
         args.shift();
 
-        if (commandSearch.length > 0) {
-
-            const command = commandSearch[0];
-
+        if (command) {
             if (
                 command.level === "admin" && msg.member &&
                 !(msg.member.roles.cache.has(process.env.LAND_ADMIN_ROLE as string) ||
                     msg.member.roles.cache.has(process.env.LAND_DEVELOPER_ROLE as string))
             ) return msg.react("⛔"); // Insufficient permission for admin level command.
 
-            msg.channel.send(await command.reply({
+            await command.reply({
                 channel: msg.channel as TextChannel,
                 member: msg.member as GuildMember,
                 args,
                 name,
                 land
-            }, msg));
+            }, msg);
         }
 
     }
